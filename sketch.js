@@ -15,7 +15,7 @@ function setup(){
     createCanvas(400, 400);
     cols = floor(width/w);
     rows = floor(height/w);
-    // frameRate(500);
+    // frameRate(250);
 
     for (let j = 0; j < rows; j++) {
         for (let i = 0; i < cols; i++) {
@@ -23,7 +23,6 @@ function setup(){
             grid.push(cell);
         }        
     }
-    console.log(grid)
     current = grid[0];
 }
 
@@ -147,24 +146,33 @@ function draw(){
         current = stack.pop();
     }
 
+    if(stack.length == 0){
+        if(keyIsPressed == true && keyCode == UP_ARROW && !current.walls[0]){
+            current = grid[(current.i + current.j * cols) - cols];
+            console.log(next)
+        } else if(keyIsPressed == true && keyCode == DOWN_ARROW && !current.walls[2]){
+            current = grid[(current.i + current.j * cols) + cols];
+            console.log(next)
+        } else if(keyIsPressed == true && keyCode == LEFT_ARROW && !current.walls[3]){
+            current = grid[(current.i + current.j * cols) - 1];
+            console.log(next)
+        } else if(keyIsPressed == true && keyCode == RIGHT_ARROW && !current.walls[1]){
+            current = grid[(current.i + current.j * cols) + 1];
+            console.log(next)
+        }
 
-
-    if(keyIsPressed == true && keyCode == UP_ARROW && !current.walls[0]){
-        current = grid[(current.i + current.j * cols) - cols];
-        console.log(next)
-    } else if(keyIsPressed == true && keyCode == DOWN_ARROW && !current.walls[2]){
-        current = grid[(current.i + current.j * cols) + cols];
-        console.log(next)
-    } else if(keyIsPressed == true && keyCode == LEFT_ARROW && !current.walls[3]){
-        current = grid[(current.i + current.j * cols) - 1];
-        console.log(next)
-    } else if(keyIsPressed == true && keyCode == RIGHT_ARROW && !current.walls[1]){
-        current = grid[(current.i + current.j * cols) + 1];
-        console.log(next)
+        var lastPosition = new Cell(cols-1, rows-1);
+        lastPosition.highlight('f1f1f1');
+        let x = (cols-1)*w;
+        let y = (rows-1)*w;
+        noStroke();
+        fill(0, 255, 0, 100);
+        rect(x, y, w, w);
+        if(current.i == lastPosition.i && current.j == lastPosition.j){
+            confirm("You win bro!!")
+        } 
     }
 
-    var lastPosition = new Cell(cols-1, rows-1);
-    lastPosition.highlight('f1f1f1');
-    keyCode = 0;
+    // keyCode = 0;
 
 }
