@@ -1,7 +1,7 @@
 // import Cell from './cell'
 
 var cols, rows;
-var w = 20;
+var w = 40;
 
 var current;
 
@@ -12,10 +12,10 @@ var stack = [];
 var pointer;
 
 function setup(){
-    createCanvas(400, 400);
+    createCanvas(600, 600);
     cols = floor(width/w);
     rows = floor(height/w);
-    // frameRate(250);
+    frameRate(100);
 
     for (let j = 0; j < rows; j++) {
         for (let i = 0; i < cols; i++) {
@@ -40,6 +40,7 @@ function Cell(i, j){
 
     this.visited = false;
     this.walls = [true, true, true, true];
+    this.isInStack = false;
 
     this.checkNeighbors = function (){
         var neighbors = [];
@@ -90,14 +91,21 @@ function Cell(i, j){
             fill(255, 0, 255, 100);
             rect(x, y, w, w);
         }
+        if(this.isInStack){
+            noStroke();
+            fill(0, 0, 255);
+            rect(x, y, w, w);
+        }
     }
 
     this.highlight = function (){
         var x = this.i*w;
         var y = this.j*w;
+
         noStroke();
-        fill(0, 0, 255, 100);
-        rect(x, y, w, w);    
+        fill(0, 0, 0);
+        // rect(x, y, w, w);
+        circle(x + w/2, y + w/2, w/2);
     }
     
 }
@@ -136,33 +144,31 @@ function draw(){
 
     if(next){
         next.visited = true;
-
+        current.isInStack = true;
         stack.push(current);
 
         removeWalls(current, next);
 
         current = next;
     } else if(stack.length > 0){
+
         current = stack.pop();
+        current.isInStack = false;
     }
 
     if(stack.length == 0){
         if(keyIsPressed == true && keyCode == UP_ARROW && !current.walls[0]){
             current = grid[(current.i + current.j * cols) - cols];
-            console.log(next)
         } else if(keyIsPressed == true && keyCode == DOWN_ARROW && !current.walls[2]){
             current = grid[(current.i + current.j * cols) + cols];
-            console.log(next)
         } else if(keyIsPressed == true && keyCode == LEFT_ARROW && !current.walls[3]){
             current = grid[(current.i + current.j * cols) - 1];
-            console.log(next)
         } else if(keyIsPressed == true && keyCode == RIGHT_ARROW && !current.walls[1]){
             current = grid[(current.i + current.j * cols) + 1];
-            console.log(next)
         }
 
         var lastPosition = new Cell(cols-1, rows-1);
-        lastPosition.highlight('f1f1f1');
+        lastPosition.highlight();
         let x = (cols-1)*w;
         let y = (rows-1)*w;
         noStroke();
@@ -170,6 +176,7 @@ function draw(){
         rect(x, y, w, w);
         if(current.i == lastPosition.i && current.j == lastPosition.j){
             confirm("You win bro!!")
+            current = grid[0];
         } 
     }
 
